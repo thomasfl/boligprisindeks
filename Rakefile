@@ -16,7 +16,8 @@ namespace :scrape do
 
   desc "Hent boligprishistorikk fra nef.no"
   task :nef do
-    require 'util/nef_scraper'
+    require File.join(File.dirname(__FILE__), 'util', 'nef_scraper')
+    # require 'util/nef_scraper'
     nef_scraper = NefScraper.new(DATABASE_URL)
     nef_scraper.scrape_price_data()
     puts "Screenscraping av nef.no ferdig."

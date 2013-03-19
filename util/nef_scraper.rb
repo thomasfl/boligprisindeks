@@ -2,7 +2,6 @@
 require 'rubygems'
 require 'open-uri'
 require 'json'
-# require 'pry'
 require 'nokogiri'
 require 'sequel'
 require 'pg'
