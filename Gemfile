@@ -11,6 +11,7 @@ gem 'pg'
 gem 'sequel'
 gem 'json'
 gem 'nokogiri'
+gem 'rspec'
 
 # gem 'omniauth-att', :path => File.expand_path("./../../omniauth-att", __FILE__)
 
