@@ -7,7 +7,6 @@ require 'omniauth-facebook'
 require 'omniauth-twitter'
 require 'sequel'
 require 'pg'
-require 'pry'
 
 class SinatraApp < Sinatra::Base
 
@@ -38,7 +37,8 @@ class SinatraApp < Sinatra::Base
   end
 
   get '/data/historikk/type/:housing_type/omrade/:housing_area' do
-    binding.pry
+    content_type :json
+    [].to_json
   end
 
   get '/auth/:provider/callback' do
@@ -58,7 +58,6 @@ class SinatraApp < Sinatra::Base
 
   get '/protected' do
     throw(:halt, [401, "Not authorized\n"]) unless session[:authenticated]
-    binding.pry
     erb "<h1>Protected content</h1>"
 
     # erb "<pre>#{JSON.pretty_generate(request.env['omniauth.auth'].to_json)}</pre>"

@@ -2,7 +2,7 @@
 require 'rubygems'
 require 'open-uri'
 require 'json'
-require 'pry'
+# require 'pry'
 require 'nokogiri'
 require 'sequel'
 require 'pg'
@@ -51,7 +51,7 @@ class NefScraper
         end
       end
     rescue
-      binding.pry
+      # binding.pry
     end
     return pricing_data
   end
