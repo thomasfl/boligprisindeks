@@ -24,6 +24,21 @@ $(document).ready(function() {
             .attr("class", "tooltip")                               // apply the 'tooltip' class
             .style("opacity", 0);                                   // set the opacity to nil
 
+
+    function make_x_axis() {            // function for the x grid lines
+        return d3.svg.axis()
+            .scale(x)
+            .orient("bottom")
+            .ticks(5);
+    };
+
+    function make_y_axis() {            // function for the y grid lines
+        return d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .ticks(5);
+    };
+
     var formatTime = d3.time.format("%Y");                       // Format the date / time for tooltips
     var formatCurrency = d3.format(",.0f");
     var formatSquareMeterPrice = function(price){
@@ -54,6 +69,8 @@ $(document).ready(function() {
             .attr("cx", function(d) { return x(d.date); })
             .attr("cy", function(d) { return y(d.close); })
             .on("mouseover", function(d) {                                                      // when the mouse goes over a circle, do the following
+
+                d3.select(d3.event.target).classed("highlight", true);
                 div.transition()                                                                        // declare the transition properties to bring fade-in div
                     .duration(200)                                                                  // it shall take 200ms
                     .style("opacity", 0.9);                                                  // and go all the way to an opacity of .9
@@ -62,6 +79,7 @@ $(document).ready(function() {
                     .style("top", (d3.event.pageY + 10 ) + "px");    // move it in the y direction
             })                                                                                                      //
             .on("mouseout", function(d) {                                                   // when the mouse leaves a circle, do the following
+                d3.select(d3.event.target).classed("highlight", false);
                 div.transition()                                                                        // declare the transition properties to fade-out the div
                     .duration(500)                                                                  // it shall take 500ms
                     .style("opacity", 0);                                                   // and go all the way to an opacity of nil
@@ -76,6 +94,24 @@ $(document).ready(function() {
         svg.append("g")         // Add the Y Axis
             .attr("class", "y axis")
             .call(yAxis);
+
+        svg.append("g")                 // Draw the x Grid lines
+            .attr("class", "grid")
+            .attr("transform", "translate(0," + height + ")")
+            .call(make_x_axis()
+                  .tickSize(-height, 0, 0)
+                  .tickFormat("")
+                 );
+
+        svg.append("g")                 // Draw the y Grid lines
+            .attr("class", "grid")
+            .call(make_y_axis()
+                  .tickSize(-width, 0, 0)
+                  .tickFormat("")
+                 );
+
+
+
     });
 
 
