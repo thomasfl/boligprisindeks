@@ -21,19 +21,35 @@ class SinatraApp < Sinatra::Base
     provider :github, 'ece9da5a3cff23b3475f','eb81c6098ba5d08e3c2dbd263bf11de5f3382d55'
     provider :facebook, '290594154312564','a26bcf9d7e254db82566f31c9d72c94e'
     provider :twitter, 'cO23zABqRXQpkmAXa8MRw', 'TwtroETQ6sEDWW8HEgt0CUWxTavwFcMgAwqHdb0k1M'
+    # persona
+    # MSN Live
   end
 
   get '/' do
-    erb "
-    <a href='/auth/github'>Login with Github</a><br>
-    <a href='/auth/facebook'>Login with facebook</a><br>
-    <a href='/auth/twitter'>Login with twitter</a><br>"
-    ## <a href='/auth/att-foundry'>Login with att-foundry</a>"
+    erb :'index.html'
   end
 
   get '/data/boligtyper' do
+    throw(:halt, [401, "Not authorized\n"]) unless session[:authenticated]
     content_type :json
-    DB[:bolig_type].to_a.to_json
+    result = DB['select * from bolig_type'].to_a
+    json_result = []
+    result.each do |item|
+      json_result.push( {"id" => item[:bolig_type_id],
+                         "name" => item[:bolig_type_navn]} )
+    end
+    return json_result.to_json
+  end
+
+  get '/data/historikk' do
+    content_type :json
+    DB['select periode.periode_start as periode, historikk.m2_pris ' +
+       'from bolig_omrade, boligpris_historikk historikk, periode ' +
+       'where ' +
+       ' periode.periode_id = historikk.periode_id ' +
+       ' and bolig_omrade.bolig_omrade_navn = \'SUM\' ' +
+       ' and bolig_type_id = 1 ' +
+       ' and bolig_omrade.bolig_omrade_id = historikk.bolig_omrade_id'].to_a.to_json
   end
 
   get '/data/historikk/type/:housing_type/omrade/:housing_area' do

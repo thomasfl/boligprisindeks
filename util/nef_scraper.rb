@@ -40,31 +40,26 @@ class NefScraper
     rest_url = "http://www.nef.no/db/boligpriser/" +
       "data/?from=&to=&housing=#{housing_type}&areas=#{area_id}"
     data = JSON.parse(open(rest_url,'r').read)
-
-    begin
-      if(data['data'].size > 0)
-        data['data'][0]['data'].each do |dataentry|
-          start_datetime = Time.at(dataentry[0]/1000)
-          m2_price_nok = dataentry[1]
-          pricing_data.push({start_datetime => m2_price_nok})
-        end
+    if(data['data'].size > 0)
+      data['data'][0]['data'].each do |dataentry|
+        start_datetime = Time.at(dataentry[0]/1000)
+        m2_price_nok = dataentry[1]
+        pricing_data.push({start_datetime => m2_price_nok})
       end
-    rescue
-      # binding.pry
     end
     return pricing_data
   end
 
   def scrape_price_data
     areas = scrape_areas
-    housing_types = {1 => 'Enebolig', 2 => 'Delt+bolig', 3 => 'Leilighet'}
+    housing_types = {1 => 'Alle', 2 => 'Enebolig', 3 => 'Delt+bolig', 4 => 'Leilighet'}
     store_areas(areas)
     store_housing_types(housing_types)
     areas.each do |area_id, area_name|
       housing_types.each do |housing_type_id, housing_type_name|
-        puts area_id.to_s + " => " + area_name + "    " +
-          housing_type_id.to_s + " ==> " +  housing_type_name
+        print "#{area_name}(#{area_id.to_s}): #{housing_type_name}(#{housing_type_id.to_s}) : "
         historic_prices = query_rest_service(housing_type_name, area_id)
+        puts "#{historic_prices.size.to_s} rader funnet"
         store_historic_prices(historic_prices, housing_type_id, area_id)
       end
     end
